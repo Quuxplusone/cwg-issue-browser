@@ -1,0 +1,13 @@
+{
+    "name": "CWG issue browser",
+    "description": "How I wish wg21.link/cwg1234 worked",
+    "image": "heroku/python",
+    "success_url": "/",
+    "formation": {
+        "web": {
+            "quantity": 1
+        }
+    },
+    "repository": "https://github.com/Quuxplusone/cwg-issue-browser",
+    "keywords": ["c++", "cache", "wg21"]
+}

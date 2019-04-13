@@ -1,0 +1,4 @@
+bottle>=0.12.13
+gevent>=1.2.1
+gevent-websocket>=0.10.1
+requests>=2.16.3
