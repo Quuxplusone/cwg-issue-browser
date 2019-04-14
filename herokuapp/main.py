@@ -3,6 +3,7 @@
 import bottle
 from bottle import Bottle
 import os
+import re
 import requests
 import time
 
@@ -60,6 +61,26 @@ def get_full_cwg_page_from_cache():
     return cached_text
 
 
+def get_full_cwg_page_from_cache_or_none():
+    global cached_text
+    return cached_text
+
+
+def get_full_cwg_page_size_or_none():
+    page_text = get_full_cwg_page_from_cache_or_none()
+    if page_text is None:
+        return None
+    page_size = len(page_text)
+    if page_size < 10000:
+        return '%d bytes' % page_size
+    elif page_size < 10000000:
+        return '%d KB' % (page_size / 1000)
+    elif page_size < 10000000000:
+        return '%d MB' % (page_size / 1000000)
+    else:
+        return '%d GB' % (page_size / 1000000000)
+
+
 def get_snippet(n):
     page_text = get_full_cwg_page_from_cache()
     anchor_tag = '<A NAME="%d">' % n
@@ -74,6 +95,17 @@ def get_snippet(n):
     return page_text[start_idx:end_idx]
 
 
+def get_issue_list_or_none():
+    global cached_text
+    if cached_text is None:
+        return None
+    result = []
+    for m in re.finditer(r'<A NAME="(\d+)">', cached_text):
+        result.append(m.group(1))
+    result.sort(key=int)
+    return result
+
+
 @app.get('/robots.txt')
 def robots_txt():
     bottle.response.content_type = 'text/plain'
@@ -83,7 +115,11 @@ def robots_txt():
 @app.get('/')
 @app.get('/index.html')
 def home():
-    return bottle.static_file('index.html', root='./herokuapp/static', mimetype='text/html')
+    return bottle.template('index.tpl', {
+        'url': FULL_CWG_PAGE_URL,
+        'issue_list': get_issue_list_or_none(),
+        'url_size': get_full_cwg_page_size_or_none(),
+    })
 
 
 @app.get('/<cwgn:re:cwg[0-9]+>')
