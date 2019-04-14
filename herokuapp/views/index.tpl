@@ -7,21 +7,19 @@
 <h2>CWG issue browser</h2>
 
 <p>
-    Issues are scraped from the official list at <a href="{{url}}">{{url}}</a>.
-%if url_size is not None:
-    That page currently weighs in at {{url_size}}.
-%end
-</p>
-
-%if issue_list is not None:
+    Issues are scraped from the official lists at
 <ul>
-%for issue in issue_list:
-    <li><a href="/cwg{{issue}}"><code>/cwg{{issue}}</code></a></li>
+%for url, size in urls_and_sizes:
+    <li><a href="{{url}}">{{url}}</a> ({{size}})</li>
 %end
 </ul>
-%else:
-<p><a href="/cwg1234"><code>/cwg1234</code></a> for example</p>
+</p>
+
+<ul>
+%for issue, status in issues_and_statuses:
+    <li><code><a href="/cwg{{issue}}">/cwg{{issue}}</a> ({{status}})</code></li>
 %end
+</ul>
 
 </body>
 </html>
